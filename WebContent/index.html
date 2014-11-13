@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SOAP JavaScript Client Test</title>
+    <script src="/com.mmartin.soap/scripts/xml2json.js"></script>  
+    <script type="text/javascript">
+        function soap() {
+            var xmlhttp = new XMLHttpRequest();
+            xmlhttp.open('POST', 'http://localhost:8080/com.mmartin.soap/ProductCatalogService?wsdl', true);
+
+            // build SOAP request
+            var sr = '<?xml version="1.0" encoding="UTF-8"?><S:Envelope xmlns:S="http://schemas.xmlsoap.org/soap/envelope/" xmlns:SOAP-ENV="http://schemas.xmlsoap.org/soap/envelope/"><SOAP-ENV:Header/><S:Body><ns2:getProductCategories xmlns:ns2="http://soap.mmartin.com/"/></S:Body></S:Envelope>';
+
+            xmlhttp.onreadystatechange = function () {
+                if (xmlhttp.readyState == 4) {
+				 // alert(xmlhttp.responseText);
+				  var xml = xmlhttp.responseXML;
+				  
+			//	  var p = "<body><p>proba</p></body>";
+			//	  var xml = p.responseXML;
+				  
+				  var path="/Envelope/Body";
+				  var evaluator = new XPathEvaluator();
+				  var resolver = evaluator.createNSResolver(xml);
+				  var result = evaluator.evaluate("S:Envelope", xml,
+                 	resolver, XPathResult.ANY_TYPE, null);
+				  
+				  console.log("result", result);
+				  
+				  console.log("result", result.singleNodeValue.firstChild.nodeValue);
+				  
+				  console.log("xml", path, xml)
+				  var nodes=xml.evaluate(path, xml, null, XPathResult.ANY_TYPE, null);
+				  console.log("nodes", nodes);
+			//	  console.log("nodes", nodes.singleNodeValue.textContent);
+				  
+				  //xml.setProperty("SelectionLanguage","XPath");
+				  
+				  //var headings = doc.evaluate("/definitions", doc, null, XPathResult.ANY_TYPE, null); 
+					/* Search the document for all h2 elements.  
+					 * The result will likely be an unordered node iterator. */
+				/*	var thisHeading = headings.iterateNext(); 
+					var alertText = "Level 2 headings in this document are:\n";
+					while (thisHeading) {
+					  alertText += thisHeading.textContent + "\n";
+					  thisHeading = headings.iterateNext();
+					} */
+				  // http://www.terracoder.com convert XML to JSON 
+				  //var json = XMLObjectifier.xmlToJSON(xmlhttp.responseXML);
+				  //var result = json.Body[0].GetQuoteResponse[0].GetQuoteResult[0].Text;
+				  // Result text is escaped XML string, convert string to XML object then convert to JSON object
+				  // json = XMLObjectifier.xmlToJSON(XMLObjectifier.textToXML(result));
+				  //console.log(result); 
+				 }
+            }
+            // Send the POST request
+            xmlhttp.setRequestHeader('Content-Type', 'text/xml');
+            xmlhttp.send(sr);
+            // send request
+            // ...
+        }
+    </script>
+</head>
+<body>
+    <form name="Demo" action="" method="post">
+        <div>
+            <input type="button" value="Soap" onclick="soap();" />
+        </div>
+    </form>
+</body>
+<html>
